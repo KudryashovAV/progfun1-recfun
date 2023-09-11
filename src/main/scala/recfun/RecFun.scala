@@ -26,15 +26,14 @@ object RecFun extends RecFunInterface:
   def balance(chars: List[Char]): Boolean =
     @tailrec
     def wereAllBracketsClosed(chars: List[Char], opensCount: Int): Boolean =
-      if opensCount < 0 || chars.isEmpty then
+      if chars.isEmpty then
         opensCount == 0
+      else if chars.head == '(' then
+        wereAllBracketsClosed(chars.tail, opensCount + 1)
+      else if chars.head == ')' then
+        opensCount > 0 && wereAllBracketsClosed(chars.tail, opensCount - 1)
       else
-        if chars.head == '(' then
-          wereAllBracketsClosed(chars.tail, opensCount + 1)
-        else if chars.head == ')' then
-          wereAllBracketsClosed(chars.tail, opensCount - 1)
-        else
-          wereAllBracketsClosed(chars.tail, opensCount)
+        wereAllBracketsClosed(chars.tail, opensCount)
 
     wereAllBracketsClosed(chars, 0)
 
@@ -44,10 +43,7 @@ object RecFun extends RecFunInterface:
   def countChange(money: Int, coins: List[Int]): Int =
     if coins.isEmpty || money < 0 then
       0
+    else if money == 0 then
+      1
     else
-      if money == 0 then
-        1
-      else
-        countChange(money - coins.head, coins) + countChange(money, coins.tail)
-
-@main def hello() = println("Hello, World")
+      countChange(money - coins.head, coins) + countChange(money, coins.tail)
